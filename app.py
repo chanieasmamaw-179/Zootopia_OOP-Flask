@@ -69,5 +69,28 @@ def delete_post(post_id):
         abort(404)  # If the post is not found, return a 404 error
 
 
+@app.route('/update/<int:post_id>', methods=['GET', 'POST'])
+def update_post(post_id):
+    # Find the post by its ID
+    post = next((post for post in blog_posts if post['id'] == post_id), None)
+
+    if post is None:
+        abort(404)  # If the post is not found, return a 404 error
+
+    if request.method == 'POST':
+        # Update the post with new data
+        post['author'] = request.form['author']
+        post['title'] = request.form['title']
+        post['content'] = request.form['content']
+        post['tags'] = request.form.get('tags', '').split(',')
+
+        post['tags'] = [tag.strip() for tag in post['tags']]  # Strip whitespace from tags
+        post['updated_at'] = '2024-01-01 12:00:00'  # Placeholder for updated time
+
+        return redirect(url_for('index'))  # Redirect to the homepage after updating
+
+    return render_template('update.html', post=post)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
