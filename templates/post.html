@@ -21,6 +21,8 @@
     <ul>
         {% for comment in post.comments %}
             <li>{{ comment.author }}: {{ comment.content }} ({{ comment.created_at }})</li>
+        {% else %}
+            <li>No comments yet.</li>
         {% endfor %}
     </ul>
 
