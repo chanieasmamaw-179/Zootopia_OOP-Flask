@@ -6,6 +6,7 @@ app = Flask(__name__)
 blog_posts = []
 post_id_counter = 1  # Simple counter for unique IDs
 
+
 @app.route('/add', methods=['GET', 'POST'])
 def add_post():
     global post_id_counter
@@ -37,9 +38,11 @@ def add_post():
 
     return render_template('add.html')
 
+
 @app.route('/')
 def index():
     return render_template('index.html', posts=blog_posts)
+
 
 @app.route('/post/<int:post_id>')
 def post(post_id):
@@ -51,6 +54,20 @@ def post(post_id):
         abort(404)
 
     return render_template('post.html', post=post)
+
+
+@app.route('/delete/<int:post_id>', methods=['POST'])
+def delete_post(post_id):
+    global blog_posts
+    # Find the post by its ID and remove it from the list
+    post_to_delete = next((post for post in blog_posts if post['id'] == post_id), None)
+
+    if post_to_delete:
+        blog_posts.remove(post_to_delete)  # Remove the post
+        return redirect(url_for('index'))  # Redirect to the homepage after deletion
+    else:
+        abort(404)  # If the post is not found, return a 404 error
+
 
 if __name__ == '__main__':
     app.run(debug=True)
